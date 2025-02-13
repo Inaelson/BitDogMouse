@@ -8,18 +8,10 @@
 #define DEBOUNCE_TIME 200 // Tempo de debounce em ms
 
 
-/** Estrutura de dados para debounce **/
-typedef struct{
-    uint8_t gpio;
-    struct repeating_timer debounce_timer;
-} debounce_data_t;
-
-/** Vetor de estruturas de dados para debounce **/
-debounce_data_t debounce_data[3] = {
-    {BUTTON_A_PIN},
-    {BUTTON_B_PIN},
-    {JOYSTICK_BUTTON_PIN}
-};
+// Estruturas de timer para cada botão
+struct repeating_timer debounce_timer_a;
+struct repeating_timer debounce_timer_b;
+struct repeating_timer debounce_timer_joystick;
 
 
 /** Inicializa os pinos correspondetes aos botões A e B e o Joystick **/
@@ -44,40 +36,43 @@ void setup_mouse_function()
     printf("Mouse function setup complete\n");
 }
 
-bool debounce_callback(struct repeating_timer *t)
+/** Função de callback para o debounce e reativação da interrupção do botão A **/
+bool debounce_callback_a(struct repeating_timer *t)
 {
-    debounce_data_t *data = (debounce_data_t *)t->user_data; // Converte o ponteiro para a estrutura de dados de debounce
-    gpio_set_irq_enabled(data->gpio, GPIO_IRQ_EDGE_FALL, true); // Reativa a interrupção
+    gpio_set_irq_enabled(BUTTON_A_PIN, GPIO_IRQ_EDGE_FALL, true); // Reativa a interrupção
     return false; // Retorna falso para não repetir a chamada
 
+}
+
+/** Função de callback para o debounce e reativação da interrupção do botão B **/
+bool debounce_callback_b(struct repeating_timer *t)
+{
+    gpio_set_irq_enabled(BUTTON_B_PIN, GPIO_IRQ_EDGE_FALL, true); // Reativa a interrupção
+    return false; // Retorna falso para não repetir a chamada
+}
+
+/** Função de callback para o debounce e reativação da interrupção do botão do Joystick **/
+bool debounce_callback_joystick(struct repeating_timer *t)
+{
+    gpio_set_irq_enabled(JOYSTICK_BUTTON_PIN, GPIO_IRQ_EDGE_FALL, true); // Reativa a interrupção
+    return false; // Retorna falso para não repetir a chamada
 }
 
 /** Função de callback para as interrupções **/
 void mouse_irq_handler(uint8_t gpio, uint32_t events)
 {
-    //Encontra a estrutura correspondente ao pino que gerou a interrupção
-    debounce_data_t *data = NULL;
-    for(int i = 0; i < 3; i++) {
-        if(debounce_data[i].gpio == gpio) {
-            data = &debounce_data[i];
-            break;
-        }
-    }
-
-    if(!data) return; // Retorna se não encontrar a estrutura
-
     //Desativa a interrupção para evitar múltiplas chamadas
     gpio_set_irq_enabled(gpio, GPIO_IRQ_EDGE_FALL, false);
 
-    //Reativa a interrupção após 20ms
-    static struct repeating_timer debounce_timer;
-    add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback, (void *)data, &debounce_timer);
-
+    // Verifica qual botão foi pressionado e ativa o timer de debounce correspondente
     if (gpio == BUTTON_A_PIN) {
+        add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_a, NULL, &debounce_timer_a);
         printf("Button A pressed\n");
     } else if (gpio == BUTTON_B_PIN) {
+        add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_b, NULL, &debounce_timer_b);
         printf("Button B pressed\n");
     } else if (gpio == JOYSTICK_BUTTON_PIN) {
+        add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_joystick, NULL, &debounce_timer_joystick);
         printf("Joystick button pressed\n");
     }
 }
