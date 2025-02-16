@@ -28,48 +28,49 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(BitDogLabUtilities C CXX ASM)
+project(BitDogUtilities C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(BitDogLabUtilities BitDogLabUtilities.c )
+add_executable(BitDogUtilities BitDogUtilities.c )
 
 #Generate PIO header
-pico_generate_pio_header(BitDogLabUtilities ${CMAKE_CURRENT_LIST_DIR}/joystick_xy.pio)
+pico_generate_pio_header(BitDogUtilities ${CMAKE_CURRENT_LIST_DIR}/joystick_xy.pio)
 
-pico_set_program_name(BitDogLabUtilities "BitDogLabUtilities")
-pico_set_program_version(BitDogLabUtilities "0.1")
+pico_set_program_name(BitDogUtilities "BitDogUtilities")
+pico_set_program_version(BitDogUtilities "0.1")
 
-target_sources(BitDogLabUtilities PRIVATE
-    BitDogLabUtilities.c
+target_sources(BitDogUtilities PRIVATE
+    BitDogUtilities.c
     src/buttons_irq.c
-    src/joystick_adc.c)
+    src/joystick_adc.c
+    src/wifi_config.c)
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(BitDogLabUtilities 0)
-pico_enable_stdio_usb(BitDogLabUtilities 1)
+pico_enable_stdio_uart(BitDogUtilities 0)
+pico_enable_stdio_usb(BitDogUtilities 1)
 
 # Add the standard library to the build
-target_link_libraries(BitDogLabUtilities
+target_link_libraries(BitDogUtilities
         pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(BitDogLabUtilities PRIVATE
+target_include_directories(BitDogUtilities PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Add any user requested libraries
-target_link_libraries(BitDogLabUtilities
+target_link_libraries(BitDogUtilities
+        pico_cyw43_arch_lwip_threadsafe_background
         hardware_adc
-        hardware_irq
-        hardware_timer
         hardware_dma
+        hardware_irq
         hardware_pio
-        pico_time
+        hardware_timer
         )
 
-pico_add_extra_outputs(BitDogLabUtilities)
+pico_add_extra_outputs(BitDogUtilities)
 

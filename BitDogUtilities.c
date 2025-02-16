@@ -1,4 +1,5 @@
 #include "src/mouseFunction.h"
+#include "src/wifi_config.h"
 
 
 
@@ -7,6 +8,13 @@ int main()
     stdio_init_all();
     sleep_ms(2000); // Aguarda 2 segundos para inicialização do monitor serial
     printf("Monitor serial initialized\n");
+
+    gpio_init(LED_PIN_RED); // Inicializa o pino do LED vermelho
+    gpio_init(LED_PIN_GREEN); // Inicializa o pino do LED verde
+    gpio_set_dir(LED_PIN_RED, GPIO_OUT); // Define o pino do LED vermelho como saída
+    gpio_set_dir(LED_PIN_GREEN, GPIO_OUT); // Define o pino do LED verde como saída
+    gpio_put(LED_PIN_RED, 1); // Liga o LED vermelho
+    gpio_put(LED_PIN_GREEN, 1); // Liga o LED verde
 
     /** Funções de inicialização dos GPIO's **/
     setup_buttons_function(); // Inicializa os pinos dos botões
@@ -18,25 +26,10 @@ int main()
     gpio_set_irq_enabled_with_callback(BUTTON_B_PIN, GPIO_IRQ_EDGE_FALL, true, &mouse_irq_handler); // Habilita a interrupção para o botão B
     gpio_set_irq_enabled_with_callback(JOYSTICK_BUTTON_PIN, GPIO_IRQ_EDGE_FALL, true, &mouse_irq_handler); // Habilita a interrupção para o botão do Joystick
 
+    wifi_init(); // Inicializa o Wi-Fi e configura a conexão UDP
+
     printf("Entrando no loop principal\n");
     while (true) {
-        sleep_ms(1000); // Aguarda 1 segundo
-        printf("valores do buffer: %d, %d\n", adc_buffer[0], adc_buffer[1]); // Imprime os valores do buffer
-        while (pio_sm_is_rx_fifo_empty(pio, sm)) {
-            sleep_us(10);  // Aguarda até que o FIFO tenha valores
-        }
-
-        uint32_t raw_x = pio_sm_get_blocking(pio, sm);
-        uint16_t adc_x = raw_x & 0x0FFF;  // Extrai os 12 bits úteis de X
-
-        while (pio_sm_is_rx_fifo_empty(pio, sm)) {
-            sleep_us(10);  // Aguarda até que o FIFO tenha valores
-        }
-
-        uint32_t raw_y = pio_sm_get_blocking(pio, sm);
-        uint16_t adc_y = raw_y & 0x0FFF;  // Extrai os 12 bits úteis de Y
-
-        printf("Valor lido do FIFO - X: %d, Y: %d\n", adc_x, adc_y);
-
+        tight_loop_contents();
     }
 }

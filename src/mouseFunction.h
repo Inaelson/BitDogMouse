@@ -16,6 +16,9 @@
 #define JOYSTICK_X_PIN 26
 #define JOYSTICK_BUTTON_PIN 22
 
+#define LED_PIN_RED 13
+#define LED_PIN_GREEN 11
+
 extern uint16_t adc_buffer[2];
 
 extern uint sm;

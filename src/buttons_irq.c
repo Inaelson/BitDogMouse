@@ -1,4 +1,5 @@
 #include "mouseFunction.h"
+#include "wifi_config.h"
 
 #define DEBOUNCE_TIME 200 // Tempo de debounce em ms
 
