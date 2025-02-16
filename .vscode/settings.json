@@ -40,6 +40,8 @@
         "stdlib.h": "c",
         "joystickfunction.h": "c",
         "irq.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "stdio.h": "c",
+        "adc.h": "c"
     }
 }

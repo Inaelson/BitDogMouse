@@ -37,12 +37,16 @@ pico_sdk_init()
 
 add_executable(BitDogLabUtilities BitDogLabUtilities.c )
 
+#Generate PIO header
+pico_generate_pio_header(BitDogLabUtilities ${CMAKE_CURRENT_LIST_DIR}/joystick_xy.pio)
+
 pico_set_program_name(BitDogLabUtilities "BitDogLabUtilities")
 pico_set_program_version(BitDogLabUtilities "0.1")
 
 target_sources(BitDogLabUtilities PRIVATE
     BitDogLabUtilities.c
-    src/mouseFunction.c)
+    src/buttons_irq.c
+    src/joystick_adc.c)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(BitDogLabUtilities 0)
@@ -62,6 +66,8 @@ target_link_libraries(BitDogLabUtilities
         hardware_adc
         hardware_irq
         hardware_timer
+        hardware_dma
+        hardware_pio
         pico_time
         )
 

@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include "pico/stdlib.h"
 #include "mouseFunction.h"
-#include "hardware/adc.h"
-#include "hardware/irq.h"
-#include "hardware/timer.h"
 
 #define DEBOUNCE_TIME 200 // Tempo de debounce em ms
 
@@ -15,7 +10,7 @@ struct repeating_timer debounce_timer_joystick;
 
 
 /** Inicializa os pinos correspondetes aos botões A e B e o Joystick **/
-void setup_mouse_function()
+void setup_buttons_function()
 {
     gpio_init(BUTTON_A_PIN); // Inicializa o pino do botão A
     gpio_set_dir(BUTTON_A_PIN, GPIO_IN); // Define o pino do botão A como entrada
@@ -28,10 +23,6 @@ void setup_mouse_function()
     gpio_init(JOYSTICK_BUTTON_PIN); // Inicializa o pino do botão do Joystick
     gpio_set_dir(JOYSTICK_BUTTON_PIN, GPIO_IN); // Define o pino do botão do Joystick como entrada
     gpio_pull_up(JOYSTICK_BUTTON_PIN); // Habilita o pull-up no pino do botão do Joystick
-
-    adc_init(); // Inicializa o ADC
-    adc_gpio_init(JOYSTICK_X_PIN); // Inicializa o pino do eixo X do Joystick
-    adc_gpio_init(JOYSTICK_Y_PIN); // Inicializa o pino do eixo Y do Joystick
 
     printf("Mouse function setup complete\n");
 }
@@ -59,7 +50,7 @@ bool debounce_callback_joystick(struct repeating_timer *t)
 }
 
 /** Função de callback para as interrupções **/
-void mouse_irq_handler(uint8_t gpio, uint32_t events)
+void mouse_irq_handler(uint gpio, uint32_t events)
 {
     //Desativa a interrupção para evitar múltiplas chamadas
     gpio_set_irq_enabled(gpio, GPIO_IRQ_EDGE_FALL, false);

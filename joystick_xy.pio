@@ -1,0 +1,16 @@
+.program joystick_xy
+
+loop:
+    pull block        ; Aguarda um valor vindo da CPU
+    mov isr, osr        ; Move o valor recebido para X
+    push noblock      ; Envia o valor para o FIFO do PIO
+    jmp loop          ; Continua capturando dados
+
+%c-sdk {
+    static inline void joystick_xy_program_init(PIO pio, uint sm, uint offset){
+    pio_sm_config c = joystick_xy_program_get_default_config(offset);
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
