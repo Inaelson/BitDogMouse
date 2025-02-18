@@ -60,11 +60,14 @@ void mouse_irq_handler(uint gpio, uint32_t events)
     if (gpio == BUTTON_A_PIN) {
         add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_a, NULL, &debounce_timer_a);
         printf("Button A pressed\n");
+        send_udp_packet("ButtonA", 7);
     } else if (gpio == BUTTON_B_PIN) {
         add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_b, NULL, &debounce_timer_b);
         printf("Button B pressed\n");
+        send_udp_packet("ButtonB", 7);
     } else if (gpio == JOYSTICK_BUTTON_PIN) {
         add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_joystick, NULL, &debounce_timer_joystick);
         printf("Joystick button pressed\n");
+        send_udp_packet("ButtonJ", 7);
     }
 }

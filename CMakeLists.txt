@@ -37,9 +37,6 @@ pico_sdk_init()
 
 add_executable(BitDogUtilities BitDogUtilities.c )
 
-#Generate PIO header
-pico_generate_pio_header(BitDogUtilities ${CMAKE_CURRENT_LIST_DIR}/joystick_xy.pio)
-
 pico_set_program_name(BitDogUtilities "BitDogUtilities")
 pico_set_program_version(BitDogUtilities "0.1")
 
@@ -66,9 +63,7 @@ target_include_directories(BitDogUtilities PRIVATE
 target_link_libraries(BitDogUtilities
         pico_cyw43_arch_lwip_threadsafe_background
         hardware_adc
-        hardware_dma
         hardware_irq
-        hardware_pio
         hardware_timer
         )
 

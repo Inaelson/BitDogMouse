@@ -2,30 +2,30 @@
 #define MOUSEFUNCTION_H
 
 #include <stdint.h>
+#include <string.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/irq.h"
-#include "hardware/pio.h"
-#include "hardware/dma.h"
 #include "hardware/adc.h"
 #include "hardware/timer.h"
+#include "pico/cyw43_arch.h"
+#include "lwip/udp.h"
+#include "lwip/pbuf.h"
 
-#define BUTTON_A_PIN 5
-#define BUTTON_B_PIN 6
-#define JOYSTICK_Y_PIN 27
-#define JOYSTICK_X_PIN 26
-#define JOYSTICK_BUTTON_PIN 22
+#define SAMPLE_RATE 50000 // Taxa de amostragem do ADC em microssegundos (500 Hz)
 
-#define LED_PIN_RED 13
-#define LED_PIN_GREEN 11
+#define BUTTON_A_PIN 5 // Pino do botão A
+#define BUTTON_B_PIN 6 // Pino do botão B
+#define JOYSTICK_Y_PIN 26 // Pino do eixo Y do Joystick
+#define JOYSTICK_X_PIN 27 // Pino do eixo X do Joystick
+#define JOYSTICK_BUTTON_PIN 22 // Pino do botão do Joystick
 
-extern uint16_t adc_buffer[2];
+#define LED_PIN_RED 13 // Pino do LED vermelho
+#define LED_PIN_GREEN 11 // Pino do LED verde
 
-extern uint sm;
-extern PIO pio;
-
-void setup_buttons_function();
-void setup_joystick_function();
-void mouse_irq_handler(uint gpio, uint32_t events);
+void setup_buttons_function(); // Função para configurar os botões
+void setup_joystick_function(); // Função para configurar o joystick
+void mouse_irq_handler(uint gpio, uint32_t events); // Manipulador de interrupção do mouse
+extern bool read_joystick_adc(struct repeating_timer *t); // Função para leitura do ADC
 
 #endif

@@ -1,13 +1,10 @@
 #include "wifi_config.h"
 #include "mouseFunction.h"
-#include "pico/cyw43_arch.h"
-#include "lwipopts.h"
-#include "lwip/udp.h"
-#include "lwip/pbuf.h"
-#include "hardware/gpio.h"
 
 struct udp_pcb *udp_conn; // Conexão UDP
+struct repeating_timer timer_read_adc; // Timer para leitura do ADC
 
+bool wifi_connected = false;
 
 // Função de callback para recepção de pacotes
 static void udp_receive_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
@@ -23,14 +20,20 @@ void wifi_init() {
         printf("Erro ao inicializar Wi-Fi!\n");
         return;
     }
-    cyw43_arch_enable_sta_mode();
+
+    cyw43_arch_enable_sta_mode(); // Habilita o modo Station
     printf("Conectando ao Wi-Fi...\n");
+
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASS, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
         printf("Falha ao conectar!\n");
         gpio_put(LED_PIN_GREEN, 0); // Mantém apenas o LED vermelho aceso para indicar falha
         return;
     }
+
     printf("Conectado!\n");
+    wifi_connected = true;
+    // Adiciona um timer para leitura do ADC
+    add_repeating_timer_us(-SAMPLE_RATE, read_joystick_adc, NULL, &timer_read_adc);
     gpio_put(LED_PIN_RED, 0); // Mantém apenas o LED verde aceso para indicar sucesso
 
     // Configuração do UDP
@@ -54,5 +57,3 @@ void send_udp_packet(char *data, uint16_t len) {
     udp_sendto(udp_conn, p, &dest_ip, UDP_PORT);
     pbuf_free(p);
 }
-
-

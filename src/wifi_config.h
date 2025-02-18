@@ -11,6 +11,9 @@
 // Variável global para a conexão UDP
 extern struct udp_pcb *udp_conn;
 
+// Variável global para indicar a conexão Wi-Fi
+extern bool wifi_connected;
+
 // Funções disponíveis no módulo
 void wifi_init();
 void send_udp_packet(char *data, uint16_t len);

@@ -42,6 +42,8 @@
         "irq.h": "c",
         "timer.h": "c",
         "stdio.h": "c",
-        "adc.h": "c"
+        "adc.h": "c",
+        "mousefunction.h": "c",
+        "wifi_config.h": "c"
     }
 }

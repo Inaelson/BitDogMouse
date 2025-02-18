@@ -30,6 +30,7 @@ int main()
 
     printf("Entrando no loop principal\n");
     while (true) {
-        tight_loop_contents();
+        cyw43_arch_poll();
+        sleep_ms(100);
     }
 }
