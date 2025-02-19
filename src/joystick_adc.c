@@ -8,8 +8,8 @@ char data[20]; // Buffer para armazenar os dados do ADC
 #define NEUTRAL_MAX 2100
 #define ADC_MIN 0
 #define ADC_MAX 4095
-#define SENSITIVITY_MIN -16
-#define SENSITIVITY_MAX 16
+#define SENSITIVITY_MIN -10
+#define SENSITIVITY_MAX 10
 
 /* Armazena os últimos valores enviados */
 int last_x = 0;
@@ -20,7 +20,7 @@ bool last_moving = false; // Indica se o joystick estava em movimento na última
 void setup_joystick_function();
 bool read_joystick_adc(struct repeating_timer *t);
 void send_packet(uint8_t *data, size_t len);
-int ajustar_sensibilidade(uint16_t valor);
+int adjust_sensibility(uint16_t valor);
 
 /* Função de inicialização do Joystick */
 void setup_joystick_function() {
@@ -32,17 +32,17 @@ void setup_joystick_function() {
 }
 
 /* Função para ajustar a sensibilidade antes do envio */
-int ajustar_sensibilidade(uint16_t valor) {
+int adjust_sensibility(uint16_t valor) {
     if (valor >= NEUTRAL_MIN && valor <= NEUTRAL_MAX) {
         return 0; // Zona neutra, sem movimentação
     }
     else if (valor < NEUTRAL_MIN) { // Movimento para esquerda/cima
-        float escala = 1.0 - ((float)(valor - ADC_MIN) / (NEUTRAL_MIN - ADC_MIN));
-        return (int)(SENSITIVITY_MIN * escala);
+        float scale = 1.0 - ((float)(valor - ADC_MIN) / (NEUTRAL_MIN - ADC_MIN));
+        return (int)(SENSITIVITY_MIN * scale);
     }
-    else { // Movimento para direita/baixo (sem inversão da escala)
-        float escala = (float)(valor - NEUTRAL_MAX) / (ADC_MAX - NEUTRAL_MAX);
-        return (int)(SENSITIVITY_MAX * escala);
+    else { // Movimento para direita/baixo (sem inversão da scale)
+        float scale = (float)(valor - NEUTRAL_MAX) / (ADC_MAX - NEUTRAL_MAX);
+        return (int)(SENSITIVITY_MAX * scale);
     }
 }
 
@@ -54,8 +54,8 @@ bool read_joystick_adc(struct repeating_timer *t) {
     uint16_t x_raw = adc_read(); // Realiza a leitura do ADC
 
     // Ajusta a sensibilidade antes de enviar
-    int x_adjusted = ajustar_sensibilidade(x_raw);
-    int y_adjusted = ajustar_sensibilidade(y_raw);
+    int x_adjusted = adjust_sensibility(x_raw);
+    int y_adjusted = adjust_sensibility(y_raw);
 
     // Determina se o joystick está em movimento
     bool moving = (x_adjusted != 0 || y_adjusted != 0);

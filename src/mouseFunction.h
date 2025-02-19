@@ -8,11 +8,8 @@
 #include "hardware/irq.h"
 #include "hardware/adc.h"
 #include "hardware/timer.h"
-#include "pico/cyw43_arch.h"
-#include "lwip/udp.h"
-#include "lwip/pbuf.h"
 
-#define SAMPLE_RATE 50000 // Taxa de amostragem do ADC em microssegundos (500 Hz)
+#define SAMPLE_RATE 70000 // Taxa de amostragem do ADC em microssegundos (10ms)
 
 #define BUTTON_A_PIN 5 // Pino do botão A
 #define BUTTON_B_PIN 6 // Pino do botão B
@@ -22,10 +19,12 @@
 
 #define LED_PIN_RED 13 // Pino do LED vermelho
 #define LED_PIN_GREEN 11 // Pino do LED verde
+#define LED_PIN_BLUE 12 // Pino do LED azul
 
 void setup_buttons_function(); // Função para configurar os botões
 void setup_joystick_function(); // Função para configurar o joystick
+void init_irq_buttons(); // Função para inicializar as interrupções dos botões
 void mouse_irq_handler(uint gpio, uint32_t events); // Manipulador de interrupção do mouse
-extern bool read_joystick_adc(struct repeating_timer *t); // Função para leitura do ADC
+bool read_joystick_adc(struct repeating_timer *t); // Função para leitura do ADC
 
 #endif

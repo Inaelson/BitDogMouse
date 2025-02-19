@@ -44,7 +44,8 @@ target_sources(BitDogUtilities PRIVATE
     BitDogUtilities.c
     src/buttons_irq.c
     src/joystick_adc.c
-    src/wifi_config.c)
+    src/wifi_config.c
+    src/wake_on_lan.c)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(BitDogUtilities 0)

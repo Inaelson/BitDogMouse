@@ -4,12 +4,20 @@
 struct udp_pcb *udp_conn; // Conexão UDP
 struct repeating_timer timer_read_adc; // Timer para leitura do ADC
 
-bool wifi_connected = false;
+volatile bool server_active = false; // Flag que indica se o servidor está ativo
+volatile int current_mode = MODE_WOL; // Inicia no modo Wake-on-LAN
+
 
 // Função de callback para recepção de pacotes
 static void udp_receive_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
     if (p != NULL) {
         printf("Pacote recebido! Tamanho: %d\n", p->tot_len);
+        server_active = true; // Ativa a flag do servidor
+        current_mode = MODE_MOUSE; // Altera o modo para mouse
+
+        // Ativa um timer para leitura do ADC
+        add_repeating_timer_us(-SAMPLE_RATE, read_joystick_adc, NULL, &timer_read_adc);
+
         pbuf_free(p);
     }
 }
@@ -31,9 +39,7 @@ void wifi_init() {
     }
 
     printf("Conectado!\n");
-    wifi_connected = true;
-    // Adiciona um timer para leitura do ADC
-    add_repeating_timer_us(-SAMPLE_RATE, read_joystick_adc, NULL, &timer_read_adc);
+    init_irq_buttons(); // Inicializa as interrupções dos botões
     gpio_put(LED_PIN_RED, 0); // Mantém apenas o LED verde aceso para indicar sucesso
 
     // Configuração do UDP
@@ -41,19 +47,19 @@ void wifi_init() {
     if (udp_conn) {
         ip_addr_t ip;
         IP4_ADDR(&ip, 0, 0, 0, 0);  // Aceita pacotes de qualquer IP
-        udp_bind(udp_conn, &ip, UDP_PORT);
-        udp_recv(udp_conn, udp_receive_callback, NULL);
-        printf("Servidor UDP configurado na porta %d\n", UDP_PORT);
+        udp_bind(udp_conn, &ip, UDP_PORT); // Associa o PCB UDP à porta
+        udp_recv(udp_conn, udp_receive_callback, NULL); // Configura a função de callback para recepção de pacotes
+        printf("Servidor UDP configurado na porta %d\n", UDP_PORT); // Mensagem de sucesso na configuração do servidor UDP
     }
 }
 
 // Envia dados para o PC
 void send_udp_packet(char *data, uint16_t len) {
-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_RAM);
-    if (!p) return;
-    memcpy(p->payload, data, len);
-    ip_addr_t dest_ip;
-    ipaddr_aton(SERVER_IP, &dest_ip);
-    udp_sendto(udp_conn, p, &dest_ip, UDP_PORT);
-    pbuf_free(p);
+    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_RAM); // Aloca um buffer para o pacote
+    if (!p) return; // Verifica se houve falha na alocação
+    memcpy(p->payload, data, len); // Copia os dados para o payload
+    ip_addr_t dest_ip; // Endereço de destino
+    ipaddr_aton(SERVER_IP, &dest_ip); // Converte o endereço IP
+    udp_sendto(udp_conn, p, &dest_ip, UDP_PORT); // Envia o pacote
+    pbuf_free(p); // Libera o buffer
 }
