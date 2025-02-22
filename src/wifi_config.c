@@ -20,6 +20,14 @@ static void udp_receive_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     }
 }
 
+/* Função para reconexão do Wi-Fi em caso de falha */
+void wifi_reconnect() {
+    cyw43_arch_deinit(); // Desconecta do Wi-Fi
+    sleep_ms(2000); // Aguarda 1 segundo
+    gpio_put(LED_PIN_GREEN, 1); // Liga novamente o LED verde
+    wifi_init(); // Realiza uma nova tentativa de conexão
+}
+
 // Inicializa Wi-Fi e configura UDP
 void wifi_init() {
     if (cyw43_arch_init()) {
@@ -33,6 +41,7 @@ void wifi_init() {
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASS, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
         printf("Falha ao conectar!\n");
         gpio_put(LED_PIN_GREEN, 0); // Mantém apenas o LED vermelho aceso para indicar falha
+        wifi_reconnect(); // Tenta novamente
         return;
     }
 
