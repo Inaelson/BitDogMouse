@@ -86,9 +86,9 @@ void mouse_irq_handler(uint gpio, uint32_t events)
             gpio_put(LED_PIN_GREEN, 0); // Desliga o LED verde
 
             printf("Sending Magic Packet\n");
-            send_magic_packet();
+            send_magic_packet(); // Envia o pacote Wake-on-LAN
 
-            add_alarm_in_ms(2000, wake_up_alarm, NULL, false); // Envia o pacote mágico após 5 segundos
+            add_alarm_in_ms(2000, wake_up_alarm, NULL, false); // Adiciona um alarme para desligar o LED azul
         }
     } else if (gpio == BUTTON_B_PIN) {
         add_repeating_timer_ms(DEBOUNCE_TIME, debounce_callback_b, NULL, &debounce_timer_b);

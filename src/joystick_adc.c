@@ -1,15 +1,15 @@
 #include "mouseFunction.h"
 #include "wifi_config.h"
 
-char data[20]; // Buffer para armazenar os dados do ADC
+char data[5]; // Buffer para armazenar os dados do ADC
 
 /* Definições dos limites da zona neutra e ADC */
-#define NEUTRAL_MIN 1800
-#define NEUTRAL_MAX 2100
-#define ADC_MIN 0
-#define ADC_MAX 4095
-#define SENSITIVITY_MIN -10
-#define SENSITIVITY_MAX 10
+#define NEUTRAL_MIN 1800 // Valor mínimo para a zona neutra
+#define NEUTRAL_MAX 2100 // Valor máximo para a zona neutra
+#define ADC_MIN 0 // Valor mínimo do ADC
+#define ADC_MAX 4095 // Valor máximo do ADC
+#define SENSITIVITY_MIN -10 // Sensibilidade mínima
+#define SENSITIVITY_MAX 10 // Sensibilidade máxima
 
 /* Armazena os últimos valores enviados */
 int last_x = 0;

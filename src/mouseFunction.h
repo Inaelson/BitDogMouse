@@ -9,7 +9,7 @@
 #include "hardware/adc.h"
 #include "hardware/timer.h"
 
-#define SAMPLE_RATE 70000 // Taxa de amostragem do ADC em microssegundos (10ms)
+#define SAMPLE_RATE 70000 // Taxa de amostragem do ADC em microssegundos (70ms)
 
 #define BUTTON_A_PIN 5 // Pino do botão A
 #define BUTTON_B_PIN 6 // Pino do botão B

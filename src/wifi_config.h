@@ -16,10 +16,6 @@
 #include "lwip/ip_addr.h"
 #include "pico/cyw43_arch.h"
 
-// Variável global para a conexão UDP
-extern struct udp_pcb *udp_conn;
-
-extern volatile bool server_active; // Flag que indica se o servidor está ativo
 extern volatile int current_mode; // Modo atual
 
 // Funções disponíveis no módulo

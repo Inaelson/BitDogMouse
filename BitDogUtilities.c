@@ -10,13 +10,13 @@ int main()
     printf("Monitor serial initialized\n");
 
     gpio_init(LED_PIN_RED); // Inicializa o pino do LED vermelho
-    gpio_init(LED_PIN_GREEN); // Inicializa o pino do LED verde
-    gpio_init(LED_PIN_BLUE); // Inicializa o pino do LED azul
     gpio_set_dir(LED_PIN_RED, GPIO_OUT); // Define o pino do LED vermelho como saída
-    gpio_set_dir(LED_PIN_GREEN, GPIO_OUT); // Define o pino do LED verde como saída
-    gpio_set_dir(LED_PIN_BLUE, GPIO_OUT); // Define o pino do LED azul como saída
     gpio_put(LED_PIN_RED, 1); // Liga o LED vermelho
+    gpio_init(LED_PIN_GREEN); // Inicializa o pino do LED verde
+    gpio_set_dir(LED_PIN_GREEN, GPIO_OUT); // Define o pino do LED verde como saída
     gpio_put(LED_PIN_GREEN, 1); // Liga o LED verde
+    gpio_init(LED_PIN_BLUE); // Inicializa o pino do LED azul
+    gpio_set_dir(LED_PIN_BLUE, GPIO_OUT); // Define o pino do LED azul como saída
 
     /** Funções de inicialização dos GPIO's **/
     setup_buttons_function(); // Inicializa os pinos dos botões
@@ -27,6 +27,7 @@ int main()
     printf("Entrando no loop principal\n");
     while (true) {
         cyw43_arch_poll();
-        sleep_ms(100);
+        sleep_ms(10);
     }
+    return 0;
 }

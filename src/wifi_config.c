@@ -4,7 +4,6 @@
 struct udp_pcb *udp_conn; // Conexão UDP
 struct repeating_timer timer_read_adc; // Timer para leitura do ADC
 
-volatile bool server_active = false; // Flag que indica se o servidor está ativo
 volatile int current_mode = MODE_WOL; // Inicia no modo Wake-on-LAN
 
 
@@ -12,7 +11,6 @@ volatile int current_mode = MODE_WOL; // Inicia no modo Wake-on-LAN
 static void udp_receive_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
     if (p != NULL) {
         printf("Pacote recebido! Tamanho: %d\n", p->tot_len);
-        server_active = true; // Ativa a flag do servidor
         current_mode = MODE_MOUSE; // Altera o modo para mouse
 
         // Ativa um timer para leitura do ADC
